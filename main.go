@@ -1,13 +1,12 @@
 package main
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"time"
 
-	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/zeek0x/covid19-ogp-lambda/env"
 )
 
 const url = "https://raw.githubusercontent.com/tokyo-metropolitan-gov/covid19/development/data/daily_positive_detail.json"
@@ -40,15 +39,11 @@ type dailyPositiveDetail struct {
 	} `json:"data"`
 }
 
-type Event struct {
-	Name string `json:"name"`
-}
-
 func weekDay(index time.Weekday) string {
 	return []string{"日", "月", "火", "水", "木", "金", "土"}[index]
 }
 
-func HandleRequest(ctx context.Context, _ Event) (string, error) {
+func Handle() (string, error) {
 	resp, _ := http.Get(url)
 	defer resp.Body.Close()
 
@@ -75,5 +70,5 @@ func HandleRequest(ctx context.Context, _ Event) (string, error) {
 }
 
 func main() {
-	lambda.Start(HandleRequest)
+	env.Main(Handle)
 }
